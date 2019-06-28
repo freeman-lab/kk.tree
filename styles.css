@@ -1,0 +1,24 @@
+body {
+    font: 12px sans-serif;
+    color: black;
+}
+.link {
+    fill: none;
+    stroke: rgb(100, 100, 100);
+    stroke-width: 2px;
+}
+.married {
+    fill: none;
+    stroke: rgb(100, 100, 200);
+    stroke-width: 2px;
+}
+.border {
+    fill: none;
+    shape-rendering: crispEdges;
+    stroke: #aaa;
+}
+.node {
+    stroke: rgb(100, 100, 100);
+    stroke-width: 2px;
+    fill: rgb(200, 200, 200);
+}
