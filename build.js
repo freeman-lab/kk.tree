@@ -248,7 +248,7 @@ function sort (input, max) {
   // loop over levels
   // for each level keep finding nodes that need to be reordered
   // when no more are found advance to the next level
-  while ((level < max) & iter < 1000) {
+  while ((level < max) & iter < 5000) {
     var selected = _.findIndex(input, function (d, k) {
       if (getLevel(d) == level) {
         var parents = getParents(input[k])
