@@ -16,7 +16,5 @@ module.exports = function () {
   })
   document.body.appendChild(container)
 
-  function graph () {}
-
-  return graph
+  return container
 }

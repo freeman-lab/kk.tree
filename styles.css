@@ -7,11 +7,14 @@ body {
     fill: none;
     stroke: rgb(100, 100, 100);
     stroke-width: 2px;
+    transition: all .2s ease !important;
+    pointer-events: none;
 }
-.married {
+.knot {
     fill: none;
     stroke: rgb(100, 100, 200);
     stroke-width: 2px;
+    transition: all .2s ease !important;
 }
 .border {
     fill: none;
@@ -22,4 +25,14 @@ body {
     stroke-width: 2px;
     cursor: pointer;
     transition: all .2s ease !important;
+}
+.circle {
+    transition: all .2s ease !important;
+}
+.unselectable {
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
 }

@@ -26,6 +26,30 @@ function build (people, pairs) {
     }
   })
 
+  // get a flattened list of all people who are parents
+  var names
+  var allnames = []
+  _.forEach(groups, function (v, k) {
+    if (k != '') {
+      names = k.split(',')
+      allnames.push(names)
+    }
+  })
+  allnames = _.flatten(allnames)
+
+  // tag everyone who is a parent
+  people = _.map(people, function (p) {
+    if (_.includes(allnames, p.name)) {
+      p.is_parent = true
+    } else {
+      p.is_parent = false
+    }
+    return p
+  })
+
+  // regenerate groups
+  var groups = _.groupBy(people, 'parents')
+
   // for anyone in the empty group
   // add them to the group with their spouse
   var spouse
@@ -66,6 +90,8 @@ function build (people, pairs) {
     groups[''].splice(foundIndex, 1)
   }
 
+
+
   // go up the tree inserting groups of children
   // in between their parents
   var child
@@ -94,7 +120,7 @@ function build (people, pairs) {
   }
 
   groups[''] = sort(groups[''], max)
-  
+
   // wrap elements in arrays based on depth
   var level
   var diff
@@ -198,12 +224,23 @@ function build (people, pairs) {
   }
 
   // build the tree
+  //
+  // warning: 
+  // super hacky handling of cousin marriage
+  // manually specifying that a parent node is associated
+  // with cousin marriage if the first child is
+  // and basing the parents off the first child
+  var check
+  var cousin
   function buildTree (array, root) {
     if (!root) {
       root = {
         name: '',
         hidden: true,
         no_parent: true,
+        is_parent: true,
+        cousin_marriage: array[0].cousin_marriage,
+        parents: array[0].cousin_marriage ? array[0].parents : null,
         id: id
       }
       id += 1
@@ -213,7 +250,10 @@ function build (people, pairs) {
       if (!_.isArray(d)) {
         subtree = {
           name: d.name,
+          is_parent: d.is_parent,
           no_parent: (d.parents.length == 0) ? true : false,
+          parents: d.parents,
+          cousin_marriage: d.cousin_marriage,
           id: id
         }
         id += 1
@@ -228,6 +268,7 @@ function build (people, pairs) {
   }
 
   var id = 0
+  
   var root = buildTree(groups[''])
 
   var married = _.map(pairs, function (d) {
@@ -237,13 +278,15 @@ function build (people, pairs) {
   //display(root)
   //display(married)
 
-  return {root: root, married: married}
+  return {data: root, married: married}
 }
 
 function sort (input, max) {
 
   var level = 0
   var iter = 0
+
+  //console.log(input)
 
   // loop over levels
   // for each level keep finding nodes that need to be reordered
@@ -252,7 +295,12 @@ function sort (input, max) {
     var selected = _.findIndex(input, function (d, k) {
       if (getLevel(d) == level) {
         var parents = getParents(input[k])
-        if ((parents.length > 0) &&
+        if (parents.length == 1) {
+          // hacky flag to indicate the individual is the result of cousin marriage
+          display('warning! length 1 parent, probably due to cousin marriage')
+          input[k][0].cousin_marriage = true
+        }
+        if ((parents.length == 2) &&
             (!((parents[0] == (k - 1)) && (parents[1] == (k + 1)))) &&
             (!((parents[0] == (k + 1)) && (parents[1] == (k - 1))))) {
           return true
