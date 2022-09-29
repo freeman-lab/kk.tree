@@ -4,7 +4,7 @@
   "description": "small family tree personal project",
   "main": "index.js",
   "dependencies": {
-    "d3": "^5.9.7",
+    "d3": "^7.6.1",
     "lodash": "^4.17.11"
   },
   "devDependencies": {},
